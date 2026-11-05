@@ -8,25 +8,19 @@ FrostShell is a lightweight Christmas-inspired terminal theme for Windows and Li
 
 ## Preview
 
-```text
-       *       .        ❄
-   .      F R O S T S H E L L      *
-        ✦  season's greetings  ✦
+The prompt and tree use multiple console colors on a dark-blue winter-night background:
 
-  ❄  ~/projects/winter-app   main
-  15:42:08  ✦ working tree clean
-
-  ❯
-```
+The CMD theme uses a black night sky, colored ASCII snowfall, a large lit tree, a Christmas greeting sign, and an interactive colored prompt. Each launch and `frost` command twinkles the lights.
 
 ## Features
 
-- Evergreen, cranberry, warm-gold and snow-white palette.
-- Seasonal startup banner and greeting commands.
-- Prompt shows current folder, clock and Git branch when Git is available.
-- Git working-tree hint (`● changes` or `✓ clean`).
+- A colored ASCII Christmas tree with lights that twinkle at startup and when you run `frost`.
+- Evergreen branches, multicolor ornaments, a gold star and trunk, and a time-of-day greeting.
+- A session-only winter-night background and Christmas-colored PowerShell syntax highlighting.
+- Prompt shows the current folder, clock, Git branch and working-tree state.
+- ASCII tree works in Windows PowerShell 5.1 and classic Windows console fonts.
 - `frost`, `frost-help`, and `frost-greet` commands.
-- PowerShell, Bash and Zsh support; optional Windows Terminal color scheme.
+- PowerShell, CMD, Bash and Zsh support; optional Windows Terminal color scheme.
 - Installers back up shell profiles before editing them.
 - No external dependencies, administrator/root privileges, or network calls.
 
@@ -34,20 +28,37 @@ FrostShell is a lightweight Christmas-inspired terminal theme for Windows and Li
 
 ### Windows PowerShell
 
-Open PowerShell in the extracted project directory:
+Windows PowerShell 5.1 is included with Windows; PowerShell 7 (`pwsh`) is optional. Install Git for Windows, then open a regular PowerShell window (do not start in `C:\Windows\System32`) and clone the repository into your user folder:
+
+```powershell
+Set-Location $HOME
+git clone https://github.com/maramraboudi/FrostShell.git
+Set-Location "$HOME\FrostShell"
+```
+
+To update a clone you already have, go to its folder and pull instead:
+
+```powershell
+Set-Location "$HOME\FrostShell"
+git pull
+```
+
+Load the theme into the current window and try its commands:
+
+```powershell
+. .\windows\FrostShell.ps1
+frost
+frost-help
+frost-greet
+```
+
+The dot and space before the script path are important: they load the functions into the current PowerShell session. To enable FrostShell automatically in new PowerShell windows, run:
 
 ```powershell
 .\install.ps1
 ```
 
-If Windows blocks the script, run `Set-ExecutionPolicy -Scope Process Bypass` in that PowerShell window only, then retry. Restart PowerShell. To preview without installing:
-
-```powershell
-. .\windows\FrostShell.ps1
-frost
-```
-
-Uninstall the loader line with:
+If Windows blocks a script, run `Set-ExecutionPolicy -Scope Process Bypass` in that PowerShell window only, then retry. Restart PowerShell to check the persistent installation. To remove the loader later, run this from the repository folder:
 
 ```powershell
 .\uninstall.ps1
@@ -74,31 +85,50 @@ The installer detects the current shell, backs up `.bashrc` or `.zshrc`, and add
 2. Add the contents of `windows/FrostShell-ColorScheme.json` to the `schemes` array in `settings.json`.
 3. Select **FrostShell** in your PowerShell profile's Appearance settings.
 
-### Windows CMD (basic)
+### Windows CMD (interactive Christmas theme)
 
-CMD has fewer customization features. For a simple festive session:
+In CMD, `%USERPROFILE%` is the Windows home-folder variable (`$HOME` is PowerShell syntax). If you are currently in `C:\Windows\System32`, go to your user folder before cloning:
 
 ```cmd
-color 0A
-prompt $E[38;5;220m🎄 $P$G$E[0m
+cd /d "%USERPROFILE%"
+git clone --branch main https://github.com/maramraboudi/FrostShell.git
+cd /d "%USERPROFILE%\FrostShell"
 ```
 
-This is session-only. For the full interactive experience, use PowerShell 7 in Windows Terminal.
+Start the festive CMD session with:
+
+```cmd
+call windows\FrostShell.cmd
+```
+
+The launcher switches to the repository folder, uses a black background for the current console window, shows the animated tree and greeting, then leaves you at an interactive colored prompt. In that same CMD window, use:
+
+```cmd
+frost
+frost-tree
+frost-greet
+frost-help
+```
+
+These are DOSKEY aliases active in that CMD session. The background and prompt changes are temporary; close the window to restore your usual colors. Use Windows Terminal for the best emoji and color support.
+
+To update later, run `git pull` from `%USERPROFILE%\FrostShell`, then call `windows\FrostShell.cmd` again.
+
+To try the same theme in PowerShell, use `Set-Location "$HOME\FrostShell"` and then `. .\windows\FrostShell.ps1`. The theme changes the background and syntax colors only in that PowerShell session.
 
 ## Commands
 
 | Command | Description |
 |---|---|
-| `frost` | Display the Christmas banner |
+| `frost` | Display the greeting and current Git context |
 | `frost-help` | List FrostShell commands |
 | `frost-greet` | Print a seasonal greeting |
 
 ## Customize
 
 - Edit the palette in `windows/FrostShell-ColorScheme.json`.
-- Change the banner in `windows/FrostShell.ps1` or `linux/frostshell.sh`.
+- Change the tree in `windows/FrostShell.ps1` or the banner in `linux/frostshell.sh`.
 - Git integration is optional; the prompt still works without Git.
-- A Unicode-capable font such as Cascadia Code is recommended for symbols.
 
 ## Safety
 
@@ -106,8 +136,7 @@ FrostShell changes only the interactive prompt and adds a loader line to your sh
 
 ## Troubleshooting
 
-- **Icons look like boxes:** choose a Unicode-capable font in your terminal settings.
-- **Colors look different:** use a terminal with ANSI true-color support; apply the included Windows Terminal scheme on Windows.
+- **CMD prompt colors do not appear:** use Windows Terminal or another ANSI-capable console; CMD prompt colors depend on terminal support.
 - **Git branch is missing:** install Git and ensure it is in `PATH`.
 - **Prompt did not change:** restart the shell and check that the FrostShell loader line exists in your profile/rc file.
 
