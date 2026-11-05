@@ -1,9 +1,51 @@
 # FrostShell - PowerShell prompt theme. Dot-source this file from your profile.
 $script:FrostLightColors = @('Red', 'Yellow', 'Cyan', 'Magenta', 'White')
 
+function Set-FrostSessionTheme {
+    $applyBackground = $null -eq $global:FrostShellOriginalColors
+    if ($applyBackground) {
+        $global:FrostShellOriginalColors = [pscustomobject]@{
+            Background = $Host.UI.RawUI.BackgroundColor
+            Foreground = $Host.UI.RawUI.ForegroundColor
+            Title = $Host.UI.RawUI.WindowTitle
+        }
+    }
+
+    $Host.UI.RawUI.BackgroundColor = 'DarkBlue'
+    $Host.UI.RawUI.ForegroundColor = 'White'
+    $Host.UI.RawUI.WindowTitle = 'FrostShell | Winter terminal'
+    if ($applyBackground) { Clear-Host }
+
+    if (Get-Command Set-PSReadLineOption -ErrorAction SilentlyContinue) {
+        Set-PSReadLineOption -Colors @{
+            Command = 'Yellow'
+            Comment = 'DarkGray'
+            Default = 'White'
+            Emphasis = 'Red'
+            Error = 'Red'
+            Keyword = 'Yellow'
+            Number = 'Red'
+            Operator = 'White'
+            Parameter = 'Cyan'
+            String = 'Magenta'
+            Type = 'Cyan'
+            Variable = 'Green'
+        }
+    }
+}
+
 function Get-FrostContext {
     $ErrorActionPreference = 'SilentlyContinue'
     $path = (Get-Location).Path
+    $displayPath = $path
+    if ($displayPath.Length -gt 52) {
+        $parent = Split-Path (Split-Path $path -Parent) -Leaf
+        $leaf = Split-Path $path -Leaf
+        $displayPath = "...\$parent\$leaf"
+        if ($displayPath.Length -gt 52) {
+            $displayPath = '...' + $displayPath.Substring($displayPath.Length - 49)
+        }
+    }
     $branch = ''
     $state = ''
     if (Get-Command git -ErrorAction SilentlyContinue) {
@@ -19,7 +61,7 @@ function Get-FrostContext {
         }
     }
     [pscustomobject]@{
-        Path = $path
+        Path = $displayPath
         Branch = $branch
         State = $state
         Time = Get-Date -Format 'HH:mm:ss'
@@ -36,25 +78,37 @@ function Get-FrostGreeting {
 function Write-FrostTreeFrame {
     param([int]$Frame)
 
-    Write-Host (' ' * 8) -NoNewline
+    Write-Host (' ' * 12) -NoNewline
+    Write-Host '+' -ForegroundColor Cyan -NoNewline
+    Write-Host (' ' * 5) -NoNewline
+    Write-Host '.' -ForegroundColor White -NoNewline
+    Write-Host (' ' * 5) -NoNewline
+    Write-Host '+' -ForegroundColor Yellow
+    Write-Host (' ' * 19) -NoNewline
     Write-Host '*' -ForegroundColor Yellow
-    for ($layer = 0; $layer -lt 8; $layer++) {
+    for ($layer = 0; $layer -lt 9; $layer++) {
         $width = 1 + (2 * $layer)
-        Write-Host (' ' * (7 - $layer)) -NoNewline
+        Write-Host (' ' * (18 - $layer)) -NoNewline
         for ($column = 0; $column -lt $width; $column++) {
-            if ((($column + (2 * $layer) + $Frame) % 5) -eq 0) {
+            $light = (($column + (2 * $layer) + $Frame) % 5) -eq 0
+            $garland = (($column + $layer) % 7) -eq 0
+            if ($light) {
                 $colorIndex = ($column + $layer + $Frame) % $script:FrostLightColors.Count
                 Write-Host 'o' -ForegroundColor $script:FrostLightColors[$colorIndex] -NoNewline
+            } elseif ($garland) {
+                Write-Host '+' -ForegroundColor Red -NoNewline
             } else {
                 Write-Host '*' -ForegroundColor Green -NoNewline
             }
         }
         Write-Host ''
     }
-    Write-Host (' ' * 7) -NoNewline
-    Write-Host '|||' -ForegroundColor DarkYellow
-    Write-Host (' ' * 5) -NoNewline
-    Write-Host '=======' -ForegroundColor Green
+    Write-Host (' ' * 17) -NoNewline
+    Write-Host '|||' -ForegroundColor Yellow
+    Write-Host (' ' * 14) -NoNewline
+    Write-Host '[R]' -ForegroundColor Red -NoNewline
+    Write-Host '  [G]' -ForegroundColor Green -NoNewline
+    Write-Host '  [Y]' -ForegroundColor Yellow
 }
 
 function Write-FrostTree {
@@ -64,7 +118,7 @@ function Write-FrostTree {
     $startLeft = 0
     $startTop = 0
     if ($Animate -and -not [Console]::IsOutputRedirected -and
-        ([Console]::CursorTop + 11) -lt [Console]::BufferHeight) {
+        ([Console]::CursorTop + 15) -lt [Console]::BufferHeight) {
         $frameCount = 4
         $startLeft = [Console]::CursorLeft
         $startTop = [Console]::CursorTop
@@ -84,20 +138,22 @@ function Write-FrostTree {
 function frost {
     $context = Get-FrostContext
     Write-Host ''
-    Write-Host "FROST / $(Get-FrostGreeting)" -ForegroundColor Cyan
+    Write-Host ' * FROST' -ForegroundColor Green -NoNewline
+    Write-Host "  /  $(Get-FrostGreeting)" -ForegroundColor Yellow
+    Write-Host 'A little winter light for your command line' -ForegroundColor Cyan
     Write-FrostTree -Animate
     Write-Host ''
-    Write-Host $context.Path -ForegroundColor Green -NoNewline
+    Write-Host ' LOCATION ' -ForegroundColor Cyan -NoNewline
+    Write-Host $context.Path -ForegroundColor White
     if ($context.Branch) {
-        Write-Host "  |  $($context.Branch)" -ForegroundColor Yellow -NoNewline
+        Write-Host " GIT $($context.Branch)" -ForegroundColor Yellow -NoNewline
         if ($context.State -eq 'modified') {
-            Write-Host '  |  modified' -ForegroundColor Red
+            Write-Host '  |  CHANGES' -ForegroundColor Red
         } else {
-            Write-Host '  |  clean' -ForegroundColor DarkGray
+            Write-Host '  |  CLEAN' -ForegroundColor Green
         }
-    } else {
-        Write-Host ''
     }
+    Write-Host '  Type frost-help for commands' -ForegroundColor Cyan
     Write-Host ''
 }
 
@@ -124,14 +180,14 @@ function global:prompt {
     Write-Host ''
     Write-Host 'o' -ForegroundColor $lightColor -NoNewline
     Write-Host ' FROST' -ForegroundColor Green -NoNewline
-    Write-Host "  $($context.Time)" -ForegroundColor DarkGray -NoNewline
-    Write-Host "  $($context.Path)" -ForegroundColor Green -NoNewline
+    Write-Host "  $($context.Time)" -ForegroundColor Cyan
+    Write-Host " $($context.Path)" -ForegroundColor White -NoNewline
     if ($context.Branch) {
         Write-Host "  |  $($context.Branch)" -ForegroundColor Yellow -NoNewline
         if ($context.State -eq 'modified') {
-            Write-Host '  |  modified' -ForegroundColor Red -NoNewline
+            Write-Host '  |  CHANGES' -ForegroundColor Red -NoNewline
         } else {
-            Write-Host '  |  clean' -ForegroundColor DarkGray -NoNewline
+            Write-Host '  |  CLEAN' -ForegroundColor Green -NoNewline
         }
     }
     Write-Host ''
@@ -139,6 +195,7 @@ function global:prompt {
     return ' '
 }
 
+Set-FrostSessionTheme
 if (-not $global:FrostShellWelcomeShown) {
     frost
     $global:FrostShellWelcomeShown = $true
