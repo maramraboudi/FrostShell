@@ -1,0 +1,21 @@
+{
+  "name": "FrostShell",
+  "background": "#101A16",
+  "foreground": "#EAF4ED",
+  "black": "#17231D",
+  "red": "#D94F5C",
+  "green": "#2ECC71",
+  "yellow": "#F4C430",
+  "blue": "#6FA8DC",
+  "purple": "#B39DDB",
+  "cyan": "#78DCE8",
+  "white": "#EAF4ED",
+  "brightBlack": "#52665A",
+  "brightRed": "#FF6B75",
+  "brightGreen": "#63E6A2",
+  "brightYellow": "#FFE082",
+  "brightBlue": "#91C8F2",
+  "brightPurple": "#D0B8FF",
+  "brightCyan": "#A5F3FC",
+  "brightWhite": "#FFFFFF"
+}
