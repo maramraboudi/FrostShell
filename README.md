@@ -10,19 +10,29 @@ FrostShell is a lightweight Christmas-inspired terminal theme for Windows and Li
 
 ```text
 FROST / Good afternoon
-
-FROST  16:42  C:\projects\winter-app  |  main  |  modified
+        *
+       o
+      ***
+     *o***
+    ****o**
+   **o****o*
+  o****o****o
+ ***o****o****
+*o****o****o***
+       |||
+     =======
+o FROST  16:42:08  C:\projects\winter-app  |  main  |  modified
 >
 ```
 
 ## Features
 
-- Evergreen, cranberry and warm-gold terminal colors.
-- A compact greeting that adapts to the time of day.
+- A colored ASCII Christmas tree with lights that twinkle at startup and when you run `frost`.
+- Evergreen branches, multicolor ornaments, a gold star and trunk, and a time-of-day greeting.
 - Prompt shows the current folder, clock, Git branch and working-tree state.
-- ASCII-safe display works in Windows PowerShell 5.1 and avoids font-dependent symbols.
+- ASCII tree works in Windows PowerShell 5.1 and classic Windows console fonts.
 - `frost`, `frost-help`, and `frost-greet` commands.
-- PowerShell, Bash and Zsh support; optional Windows Terminal color scheme.
+- PowerShell, CMD, Bash and Zsh support; optional Windows Terminal color scheme.
 - Installers back up shell profiles before editing them.
 - No external dependencies, administrator/root privileges, or network calls.
 
@@ -87,16 +97,15 @@ The installer detects the current shell, backs up `.bashrc` or `.zshrc`, and add
 2. Add the contents of `windows/FrostShell-ColorScheme.json` to the `schemes` array in `settings.json`.
 3. Select **FrostShell** in your PowerShell profile's Appearance settings.
 
-### Windows CMD (basic)
+### Windows CMD
 
-CMD has fewer customization features. For a simple festive session:
+From the repository directory, call the CMD launcher to show the animated tree and enable a colored prompt with the current path and clock:
 
 ```cmd
-color 0A
-prompt $E[38;5;220m🎄 $P$G$E[0m
+call windows\FrostShell.cmd
 ```
 
-This is session-only. For the full interactive experience, use PowerShell 7 in Windows Terminal.
+This changes only the current CMD window. The prompt uses ANSI colors in Windows Terminal and other ANSI-capable consoles; the tree itself uses PowerShell's built-in console colors.
 
 ## Commands
 
@@ -109,7 +118,7 @@ This is session-only. For the full interactive experience, use PowerShell 7 in W
 ## Customize
 
 - Edit the palette in `windows/FrostShell-ColorScheme.json`.
-- Change the banner in `windows/FrostShell.ps1` or `linux/frostshell.sh`.
+- Change the tree in `windows/FrostShell.ps1` or the banner in `linux/frostshell.sh`.
 - Git integration is optional; the prompt still works without Git.
 - A Unicode-capable font such as Cascadia Code is recommended for symbols.
 
@@ -120,7 +129,7 @@ FrostShell changes only the interactive prompt and adds a loader line to your sh
 ## Troubleshooting
 
 - **Icons look like boxes:** choose a Unicode-capable font in your terminal settings.
-- **Colors look different:** use a terminal with ANSI true-color support; apply the included Windows Terminal scheme on Windows.
+- **CMD prompt colors do not appear:** use Windows Terminal or another ANSI-capable console; CMD prompt colors depend on terminal support.
 - **Git branch is missing:** install Git and ensure it is in `PATH`.
 - **Prompt did not change:** restart the shell and check that the FrostShell loader line exists in your profile/rc file.
 
