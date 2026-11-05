@@ -1,4 +1,10 @@
 @echo off
+if /i "%FROSTSHELL_PATH_ADDED%"=="1" goto path_ready
+for %%I in ("%~dp0..") do set "FROSTSHELL_ROOT=%%~fI"
+set "PATH=%FROSTSHELL_ROOT%;%PATH%"
+set "FROSTSHELL_PATH_ADDED=1"
+:path_ready
+
 if /i "%~1"=="/tree" goto tree
 if /i "%~1"=="/greet" goto greet
 if /i "%~1"=="/help" goto help
@@ -6,7 +12,7 @@ if /i "%~1"=="/help" goto help
 cd /d "%~dp0.."
 chcp 65001 >nul
 title FrostShell - Winter Terminal
-color 0F
+color 1F
 cls
 
 where.exe powershell.exe >nul 2>nul
@@ -14,11 +20,6 @@ if errorlevel 1 (
     echo FrostShell needs Windows PowerShell 5.1 or later.
     exit /b 1
 )
-
-doskey frost=call "%~f0" /tree
-doskey frost-tree=call "%~f0" /tree
-doskey frost-greet=call "%~f0" /greet
-doskey frost-help=call "%~f0" /help
 
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0FrostShell.ps1" -Action Welcome
 if errorlevel 1 exit /b 1

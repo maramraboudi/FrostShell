@@ -10,7 +10,21 @@ FrostShell is a lightweight Christmas-inspired terminal theme for Windows and Li
 
 The prompt and tree use multiple console colors on a dark-blue winter-night background:
 
-The CMD theme uses a black night sky, colored ASCII snowfall, a large lit tree, a Christmas greeting sign, and an interactive colored prompt. Each launch and `frost` command twinkles the lights.
+The CMD theme uses a midnight-blue sky, animated colored snowfall, a larger lit tree, a Christmas greeting sign, and an interactive colored prompt. The command names are real `.cmd` files in the repository root, not temporary CMD aliases; the launcher adds that folder to this CMD session's `PATH`, so they work even when Windows is configured not to search the current directory.
+
+```text
+  🎄 FROSTSHELL  *  WINTER NIGHT  ☃️
+  .       *        +         .       *        +
+                 *
+                /o\
+               //+o\\
+              /o///o\                  +----------------------------+
+             //o/+///o                 |  Merry Christmas!          |
+            /o///+o///o\               |  From FrostShell  🎄       |
+           //o/+///o+///o\              |  Type frost-help below     |
+          /o///+o///o/+///o\            +----------------------------+
+          [large tree with twinkling lights and falling snow]
+```
 
 ## Features
 
@@ -101,7 +115,7 @@ Start the festive CMD session with:
 call windows\FrostShell.cmd
 ```
 
-The launcher switches to the repository folder, uses a black background for the current console window, shows the animated tree and greeting, then leaves you at an interactive colored prompt. In that same CMD window, use:
+The launcher switches to the repository folder, sets a midnight-blue background for the current console window, shows the animated snowy tree and greeting, then leaves you at an interactive colored prompt. In that same CMD window, use:
 
 ```cmd
 frost
@@ -110,9 +124,18 @@ frost-greet
 frost-help
 ```
 
-These are DOSKEY aliases active in that CMD session. The background and prompt changes are temporary; close the window to restore your usual colors. Use Windows Terminal for the best emoji and color support.
+These commands are `.cmd` launchers in the repository folder and are added to this CMD window's `PATH`, so they work without DOSKEY setup or current-directory command lookup. The background and prompt changes are temporary; close the window to restore your usual colors. Use Windows Terminal for the best emoji and color support.
 
 To update later, run `git pull` from `%USERPROFILE%\FrostShell`, then call `windows\FrostShell.cmd` again.
+
+If CMD says a FrostShell command is not recognized, first check that the current folder is the clone:
+
+```cmd
+cd
+dir frost*.cmd
+```
+
+If needed, return to the clone with `cd /d "%USERPROFILE%\FrostShell"` and start the theme again.
 
 To try the same theme in PowerShell, use `Set-Location "$HOME\FrostShell"` and then `. .\windows\FrostShell.ps1`. The theme changes the background and syntax colors only in that PowerShell session.
 

@@ -49,113 +49,146 @@ function Get-FrostGreeting {
 }
 
 function Write-FrostSky {
-    param([int]$Frame)
+    param([int]$Frame, [int]$Layer, [int]$TreeHeight)
 
-    $width = 76
-    $colors = @('DarkGray', 'Cyan', 'Magenta', 'White', 'Yellow')
-    for ($row = 0; $row -lt 3; $row++) {
-        $line = New-Object char[] $width
-        for ($column = 0; $column -lt $width; $column++) { $line[$column] = ' ' }
-        for ($column = 3; $column -lt $width; $column += 7) {
-            $position = ($column + (11 * $row) + (3 * $Frame)) % $width
-            $spark = @('.', '+', '*')[($row + $column + $Frame) % 3]
-            $line[$position] = $spark
-        }
-        for ($column = 0; $column -lt $width; $column++) {
-            if ($line[$column] -eq ' ') {
-                Write-Host ' ' -NoNewline
-            } else {
-                $color = $colors[($column + $row + $Frame) % $colors.Count]
-                Write-Host $line[$column] -ForegroundColor $color -NoNewline
-            }
-        }
-        Write-Host ''
+    $width = 78
+    $line = New-Object char[] $width
+    $colors = New-Object object[] $width
+    for ($column = 0; $column -lt $width; $column++) {
+        $line[$column] = ' '
+        $colors[$column] = 'DarkGray'
     }
-}
 
-function Write-FrostTreeFrame {
-    param([int]$Frame)
-
-    Write-Host (' ' * 10) -NoNewline
-    Write-Host '*' -ForegroundColor Yellow
-    for ($layer = 0; $layer -lt 12; $layer++) {
-        $width = 1 + (2 * $layer)
-        $indent = 11 - $layer
-        Write-Host (' ' * $indent) -NoNewline
-        for ($column = 0; $column -lt $width; $column++) {
-            $isLight = (($column + (2 * $layer) + $Frame) % 6) -eq 0
-            if ($isLight) {
-                $colorIndex = ($column + $layer + $Frame) % $script:FrostLightColors.Count
-                Write-Host 'o' -ForegroundColor $script:FrostLightColors[$colorIndex] -NoNewline
-            } elseif ((($column + $layer) % 9) -eq 0) {
-                Write-Host '+' -ForegroundColor Red -NoNewline
+    $treeLayer = $Layer
+    $treeStart = 2 + ($TreeHeight - 1 - $treeLayer)
+    if ($treeLayer -eq 0) {
+        $line[($treeStart + 0)] = '*'
+        $colors[($treeStart + 0)] = 'Yellow'
+    } elseif ($treeLayer -lt $TreeHeight) {
+        $treeWidth = 1 + (2 * $treeLayer)
+        for ($branch = 0; $branch -lt $treeWidth; $branch++) {
+            $position = $treeStart + $branch
+            if ($branch -eq 0 -or $branch -eq ($treeWidth - 1)) {
+                $line[$position] = '/'
+                $colors[$position] = 'Green'
+            } elseif ((($branch + $treeLayer + $Frame) % 4) -eq 0) {
+                $lightIndex = ($branch + $treeLayer + $Frame) % $script:FrostLightColors.Count
+                $line[$position] = 'o'
+                $colors[$position] = $script:FrostLightColors[$lightIndex]
+            } elseif ((($branch + (2 * $treeLayer)) % 7) -eq 0) {
+                $line[$position] = '+'
+                $colors[$position] = 'Red'
             } else {
-                Write-Host '/' -ForegroundColor Green -NoNewline
+                $line[$position] = '/'
+                $colors[$position] = 'Green'
             }
         }
-        $signRow = $null
-        switch ($layer) {
-            4 { $signRow = '  +--------------------------+' }
-            5 { $signRow = '  |  🎄 MERRY CHRISTMAS!      |' }
-            6 { $signRow = '  |  Welcome to FrostShell  |' }
-            7 { $signRow = '  |  Type frost-help below  |' }
-            8 { $signRow = '  +--------------------------+' }
+    } elseif ($treeLayer -eq $TreeHeight) {
+        for ($position = 2; $position -lt (2 + (2 * $TreeHeight - 1)); $position++) {
+            $line[$position] = '='
+            $colors[$position] = 'Green'
         }
-        if ($signRow) {
-            $spacesToSign = [Math]::Max(2, 39 - $indent - $width)
-            Write-Host (' ' * $spacesToSign) -NoNewline
-            if ($layer -in 4, 8) {
-                Write-Host $signRow -ForegroundColor DarkYellow
-            } else {
-                Write-Host '  | ' -ForegroundColor DarkYellow -NoNewline
-                if ($layer -eq 5) {
-                    Write-Host '🎄 MERRY CHRISTMAS!' -ForegroundColor White -NoNewline
-                    Write-Host '      |' -ForegroundColor DarkYellow
-                } elseif ($layer -eq 6) {
-                    Write-Host 'Welcome to FrostShell' -ForegroundColor Cyan -NoNewline
-                    Write-Host '  |' -ForegroundColor DarkYellow
-                } else {
-                    Write-Host 'Type frost-help below' -ForegroundColor Yellow -NoNewline
-                    Write-Host '  |' -ForegroundColor DarkYellow
-                }
-            }
-        } else {
-            Write-Host ''
+    } elseif ($treeLayer -le ($TreeHeight + 2)) {
+        $trunk = ' ||| '
+        $trunkStart = 2 + $TreeHeight - 2
+        for ($index = 0; $index -lt $trunk.Length; $index++) {
+            $line[$trunkStart + $index] = $trunk[$index]
+            $colors[$trunkStart + $index] = 'DarkYellow'
         }
     }
-    Write-Host (' ' * 9) -NoNewline
-    Write-Host '|||' -ForegroundColor DarkYellow
-    Write-Host (' ' * 7) -NoNewline
-    Write-Host '=========' -ForegroundColor Green
+
+    $snowColors = @('White', 'Cyan', 'Magenta', 'Yellow')
+    for ($flake = 0; $flake -lt 21; $flake++) {
+        $snowRow = (($flake * 5) + ($Frame * 2)) % ($TreeHeight + 4)
+        if ($snowRow -ne $Layer) { continue }
+        $snowColumn = (($flake * 19) + ($Frame * 5) + 41) % $width
+        if ($line[$snowColumn] -eq ' ') {
+            $line[$snowColumn] = @('.', '+', '*')[($flake + $Frame) % 3]
+            $colors[$snowColumn] = $snowColors[($flake + $Frame) % $snowColors.Count]
+        }
+    }
+
+    if ($Layer -ge 5 -and $Layer -le 9) {
+        $signStart = 42
+        $signText = switch ($Layer) {
+            5 { '+----------------------------+' }
+            6 { '|  Merry Christmas!          |' }
+            7 { '|  From FrostShell  🎄       |' }
+            8 { '|  Type frost-help below     |' }
+            9 { '+----------------------------+' }
+        }
+        for ($index = 0; $index -lt $signText.Length; $index++) {
+            $position = $signStart + $index
+            if ($position -ge $width) { break }
+            $line[$position] = $signText[$index]
+            if ($Layer -eq 5 -or $Layer -eq 9 -or $index -eq 0 -or $index -eq ($signText.Length - 1)) {
+                $colors[$position] = 'DarkYellow'
+            } elseif ($Layer -eq 7) {
+                $colors[$position] = 'Cyan'
+            } elseif ($Layer -eq 8) {
+                $colors[$position] = 'Green'
+            } else {
+                $colors[$position] = 'White'
+            }
+        }
+    }
+
+    $column = 0
+    while ($column -lt $width) {
+        $color = $colors[$column]
+        $end = $column + 1
+        while ($end -lt $width -and $colors[$end] -eq $color) { $end++ }
+        $segment = New-Object char[] ($end - $column)
+        [Array]::Copy($line, $column, $segment, 0, $segment.Length)
+        Write-Host (-join $segment) -ForegroundColor $color -NoNewline
+        $column = $end
+    }
+    Write-Host ''
 }
 
 function Write-FrostScene {
-    param([switch]$Animate)
+    param([int]$Frame, [int]$TreeHeight)
 
-    Write-Host '  🎄 FROSTSHELL  ' -ForegroundColor Cyan -NoNewline
-    Write-Host ' *  Winter night edition  ☃️' -ForegroundColor Yellow
-    Write-FrostSky -Frame ([int](Get-Date -Format 'ss') % 3)
-    $frameCount = 1
-    if ($Animate -and -not [Console]::IsOutputRedirected -and
-        ([Console]::CursorTop + 18) -lt [Console]::BufferHeight) {
-        $frameCount = 4
+    Write-Host '  🎄 FROSTSHELL  *  WINTER NIGHT  ☃️' -ForegroundColor Cyan
+    for ($layer = 0; $layer -lt ($TreeHeight + 4); $layer++) {
+        Write-FrostSky -Frame $Frame -Layer $layer -TreeHeight $TreeHeight
     }
-    for ($frame = 0; $frame -lt $frameCount; $frame++) {
-        if ($frame -gt 0) {
-            $top = [Console]::CursorTop - 15
-            [Console]::SetCursorPosition(0, $top)
-        }
-        Write-FrostTreeFrame -Frame $frame
-        if ($frame -lt ($frameCount - 1)) { Start-Sleep -Milliseconds 180 }
-    }
-    Write-Host ''
     Write-Host '  ✨ Snow is falling... your next command is yours.' -ForegroundColor Cyan
-    Write-Host '  Try: frost-help  |  frost-greet' -ForegroundColor DarkGray
 }
 
 function Show-FrostTree {
     Clear-Host
-    Write-FrostScene -Animate
+    $treeHeight = 17
+    $frameCount = 1
+    $startTop = $null
+    $cursorVisible = $null
+    try {
+        if (-not [Console]::IsOutputRedirected) {
+            $candidateTop = [Console]::CursorTop
+            if (($candidateTop + $treeHeight + 5) -lt [Console]::BufferHeight) {
+                $frameCount = 7
+                $startTop = $candidateTop
+                $cursorVisible = [Console]::CursorVisible
+            }
+        }
+    } catch [System.IO.IOException] {
+        $frameCount = 1
+    } catch [System.ArgumentOutOfRangeException] {
+        $frameCount = 1
+    }
+
+    try {
+        if ($frameCount -gt 1) { [Console]::CursorVisible = $false }
+        for ($frame = 0; $frame -lt $frameCount; $frame++) {
+            if ($frame -gt 0) { [Console]::SetCursorPosition(0, $startTop) }
+            Write-FrostScene -Frame $frame -TreeHeight $treeHeight
+            if ($frame -lt ($frameCount - 1)) { Start-Sleep -Milliseconds 130 }
+        }
+    } finally {
+        if ($frameCount -gt 1 -and $null -ne $cursorVisible) {
+            try { [Console]::CursorVisible = $cursorVisible } catch [System.IO.IOException] {}
+        }
+    }
 }
 
 function frost {
@@ -185,16 +218,16 @@ function frost-help {
     Write-Host '  frost-help  Show this command list' -ForegroundColor White
     if (-not $isDotSourced) {
         Write-Host ''
-        Write-Host '  CMD aliases are available after calling windows\FrostShell.cmd.' -ForegroundColor DarkGray
+        Write-Host '  CMD commands are available after starting windows\FrostShell.cmd.' -ForegroundColor DarkGray
     }
 }
 
 function frost-greet {
     $greetings = @(
-        'Merry Christmas! May your builds be bright. 🎄',
-        'Happy holidays! Wishing you a cozy coding season. ❄️',
-        'May your commits be clean and your cocoa warm. ☕',
-        'Season''s greetings, and happy debugging! ✨'
+        'Merry Christmas! May your builds be bright.',
+        'Happy holidays! Wishing you a cozy coding season.',
+        'May your commits be clean and your cocoa warm.',
+        'Season''s greetings, and happy debugging!'
     )
     Write-Host ("  " + ($greetings | Get-Random)) -ForegroundColor Yellow
 }
