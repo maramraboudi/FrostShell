@@ -10,30 +10,7 @@ FrostShell is a lightweight Christmas-inspired terminal theme for Windows and Li
 
 The prompt and tree use multiple console colors on a dark-blue winter-night background:
 
-```text
- * FROST  /  Good afternoon
- A little winter light for your command line
-             +     .     +
-                   *
-                  o
-                 ***
-                *o***
-               ****o**
-              **o+***o*
-             o*+**o***+o
-            *+*o****o****
-           +o****o+***o**+
-          ****o*+**o***+o**
-                   |||
-                [R]  [G]  [Y]
- LOCATION C:\projects\winter-app
- GIT main  |  CLEAN
- Type frost-help for commands
-
- o FROST  16:42:08
- C:\projects\winter-app  |  main  |  CLEAN
- >
-```
+The CMD theme uses a black night sky, colored ASCII snowfall, a large lit tree, a Christmas greeting sign, and an interactive colored prompt. Each launch and `frost` command twinkles the lights.
 
 ## Features
 
@@ -108,13 +85,13 @@ The installer detects the current shell, backs up `.bashrc` or `.zshrc`, and add
 2. Add the contents of `windows/FrostShell-ColorScheme.json` to the `schemes` array in `settings.json`.
 3. Select **FrostShell** in your PowerShell profile's Appearance settings.
 
-### Windows CMD
+### Windows CMD (interactive Christmas theme)
 
 In CMD, `%USERPROFILE%` is the Windows home-folder variable (`$HOME` is PowerShell syntax). If you are currently in `C:\Windows\System32`, go to your user folder before cloning:
 
 ```cmd
 cd /d "%USERPROFILE%"
-git clone https://github.com/maramraboudi/FrostShell.git
+git clone --branch main https://github.com/maramraboudi/FrostShell.git
 cd /d "%USERPROFILE%\FrostShell"
 ```
 
@@ -124,7 +101,18 @@ Start the festive CMD session with:
 call windows\FrostShell.cmd
 ```
 
-The launcher switches to the repository folder, sets a winter-night background for the current console window, and prints the colored tree. It also enables a colored prompt with the current path and clock. These changes last only for that CMD window; close it to restore your usual colors.
+The launcher switches to the repository folder, uses a black background for the current console window, shows the animated tree and greeting, then leaves you at an interactive colored prompt. In that same CMD window, use:
+
+```cmd
+frost
+frost-tree
+frost-greet
+frost-help
+```
+
+These are DOSKEY aliases active in that CMD session. The background and prompt changes are temporary; close the window to restore your usual colors. Use Windows Terminal for the best emoji and color support.
+
+To update later, run `git pull` from `%USERPROFILE%\FrostShell`, then call `windows\FrostShell.cmd` again.
 
 To try the same theme in PowerShell, use `Set-Location "$HOME\FrostShell"` and then `. .\windows\FrostShell.ps1`. The theme changes the background and syntax colors only in that PowerShell session.
 
