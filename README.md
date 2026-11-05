@@ -9,22 +9,18 @@ FrostShell is a lightweight Christmas-inspired terminal theme for Windows and Li
 ## Preview
 
 ```text
-       *       .        ❄
-   .      F R O S T S H E L L      *
-        ✦  season's greetings  ✦
+FROST / Good afternoon
 
-  ❄  ~/projects/winter-app   main
-  15:42:08  ✦ working tree clean
-
-  ❯
+FROST  16:42  C:\projects\winter-app  |  main  |  modified
+>
 ```
 
 ## Features
 
-- Evergreen, cranberry, warm-gold and snow-white palette.
-- Seasonal startup banner and greeting commands.
-- Prompt shows current folder, clock and Git branch when Git is available.
-- Git working-tree hint (`● changes` or `✓ clean`).
+- Evergreen, cranberry and warm-gold terminal colors.
+- A compact greeting that adapts to the time of day.
+- Prompt shows the current folder, clock, Git branch and working-tree state.
+- ASCII-safe display works in Windows PowerShell 5.1 and avoids font-dependent symbols.
 - `frost`, `frost-help`, and `frost-greet` commands.
 - PowerShell, Bash and Zsh support; optional Windows Terminal color scheme.
 - Installers back up shell profiles before editing them.
@@ -34,20 +30,37 @@ FrostShell is a lightweight Christmas-inspired terminal theme for Windows and Li
 
 ### Windows PowerShell
 
-Open PowerShell in the extracted project directory:
+Windows PowerShell 5.1 is included with Windows; PowerShell 7 (`pwsh`) is optional. Install Git for Windows, then open a regular PowerShell window (do not start in `C:\Windows\System32`) and clone the repository into your user folder:
+
+```powershell
+Set-Location $HOME
+git clone https://github.com/maramraboudi/FrostShell.git
+Set-Location "$HOME\FrostShell"
+```
+
+To update a clone you already have, go to its folder and pull instead:
+
+```powershell
+Set-Location "$HOME\FrostShell"
+git pull
+```
+
+Load the theme into the current window and try its commands:
+
+```powershell
+. .\windows\FrostShell.ps1
+frost
+frost-help
+frost-greet
+```
+
+The dot and space before the script path are important: they load the functions into the current PowerShell session. To enable FrostShell automatically in new PowerShell windows, run:
 
 ```powershell
 .\install.ps1
 ```
 
-If Windows blocks the script, run `Set-ExecutionPolicy -Scope Process Bypass` in that PowerShell window only, then retry. Restart PowerShell. To preview without installing:
-
-```powershell
-. .\windows\FrostShell.ps1
-frost
-```
-
-Uninstall the loader line with:
+If Windows blocks a script, run `Set-ExecutionPolicy -Scope Process Bypass` in that PowerShell window only, then retry. Restart PowerShell to check the persistent installation. To remove the loader later, run this from the repository folder:
 
 ```powershell
 .\uninstall.ps1
@@ -89,7 +102,7 @@ This is session-only. For the full interactive experience, use PowerShell 7 in W
 
 | Command | Description |
 |---|---|
-| `frost` | Display the Christmas banner |
+| `frost` | Display the greeting and current Git context |
 | `frost-help` | List FrostShell commands |
 | `frost-greet` | Print a seasonal greeting |
 

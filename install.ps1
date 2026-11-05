@@ -7,8 +7,14 @@ if (-not (Test-Path $profileDir)) { New-Item -ItemType Directory -Path $profileD
 if (-not (Test-Path $profilePath)) { New-Item -ItemType File -Path $profilePath -Force | Out-Null }
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 Copy-Item $profilePath "$profilePath.frostshell-backup-$stamp" -Force
-$loader = ". '$source'"
+$escapedSource = $source.Replace("'", "''")
+$loader = ". '$escapedSource'"
 $content = Get-Content $profilePath -Raw
-if ($content -notlike '*FrostShell.ps1*') { Add-Content -Path $profilePath -Value "`r`n# FrostShell theme`r`n$loader" }
+$loaderPattern = '(?m)^' + [regex]::Escape($loader) + '\s*$'
+if ($content -notmatch $loaderPattern) {
+    $append = "`r`n"
+    if ($content -notmatch '(?m)^\s*# FrostShell theme\s*$') { $append += "# FrostShell theme`r`n" }
+    Add-Content -Path $profilePath -Value ($append + $loader)
+}
 Write-Host 'FrostShell installed. Restart PowerShell to activate.' -ForegroundColor Green
 Write-Host "Profile backup: $profilePath.frostshell-backup-$stamp"
