@@ -126,6 +126,8 @@ frost-help
 
 These commands are `.cmd` launchers in the repository folder and are added to this CMD window's `PATH`, so they work without DOSKEY setup or current-directory command lookup. The background and prompt changes are temporary; close the window to restore your usual colors. Use Windows Terminal for the best emoji and color support.
 
+`frost-help` includes a little duck parade; `frost-greet` gives you a seasonal message from Santa.
+
 To update later, run `git pull` from `%USERPROFILE%\FrostShell`, then call `windows\FrostShell.cmd` again.
 
 If CMD says a FrostShell command is not recognized, first check that the current folder is the clone:
@@ -144,8 +146,8 @@ To try the same theme in PowerShell, use `Set-Location "$HOME\FrostShell"` and t
 | Command | Description |
 |---|---|
 | `frost` | Display the greeting and current Git context |
-| `frost-help` | List FrostShell commands |
-| `frost-greet` | Print a seasonal greeting |
+| `frost-help` | Show the command list with a duck parade |
+| `frost-greet` | Hear a festive greeting from Santa |
 
 ## Customize
 

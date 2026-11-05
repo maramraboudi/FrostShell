@@ -211,11 +211,16 @@ function frost {
 
 function frost-help {
     Write-Host ''
-    Write-Host '  FrostShell commands' -ForegroundColor Cyan
-    Write-Host '  frost       Show the winter scene and current Git status' -ForegroundColor White
+    Write-Host '       __          __          __' -ForegroundColor Yellow
+    Write-Host '  ___(o )>   ___(o )>   ___(o )>' -ForegroundColor Yellow
+    Write-Host '  \ <_. )    \ <_. )    \ <_. )' -ForegroundColor DarkYellow
+    Write-Host '   `---`      `---`      `---`' -ForegroundColor DarkYellow
+    Write-Host ''
+    Write-Host '  🦆 FROSTSHELL COMMANDS 🦆' -ForegroundColor Cyan
+    Write-Host '  frost       Show the snowy scene and Git status' -ForegroundColor White
     Write-Host '  frost-tree  Replay the twinkling tree scene' -ForegroundColor White
-    Write-Host '  frost-greet Show a festive greeting' -ForegroundColor White
-    Write-Host '  frost-help  Show this command list' -ForegroundColor White
+    Write-Host '  frost-greet Hear a greeting from Santa' -ForegroundColor White
+    Write-Host '  frost-help  Show the duck parade and this list' -ForegroundColor White
     if (-not $isDotSourced) {
         Write-Host ''
         Write-Host '  CMD commands are available after starting windows\FrostShell.cmd.' -ForegroundColor DarkGray
@@ -224,12 +229,12 @@ function frost-help {
 
 function frost-greet {
     $greetings = @(
-        'Merry Christmas! May your builds be bright.',
-        'Happy holidays! Wishing you a cozy coding season.',
-        'May your commits be clean and your cocoa warm.',
-        'Season''s greetings, and happy debugging!'
+        'Ho ho ho! May your builds be bright and your bugs take the night off!',
+        'Merry Christmas! Santa hopes your cocoa is warm and your commits are clean.',
+        'Happy holidays! Keep a little wonder in every line of code.',
+        'Ho ho ho! Wishing you a cozy, cheerful, wonderfully festive season!'
     )
-    Write-Host ("  " + ($greetings | Get-Random)) -ForegroundColor Yellow
+    Write-Host ("  🎅 Santa says: " + ($greetings | Get-Random) + ' 🎄') -ForegroundColor Yellow
 }
 
 function global:prompt {
